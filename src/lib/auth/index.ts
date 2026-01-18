@@ -8,32 +8,8 @@ const FigmaProvider = {
   id: "figma",
   name: "Figma",
   type: "oauth" as const,
-  authorization: {
-    url: "https://www.figma.com/oauth",
-    params: {
-      scope: "file_read",
-      response_type: "code",
-    },
-  },
-  token: {
-    url: "https://api.figma.com/v1/oauth/token",
-    async request({ params, provider }: { params: { code: string; redirect_uri: string }; provider: { clientId: string; clientSecret: string } }) {
-      const response = await fetch("https://api.figma.com/v1/oauth/token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          client_id: provider.clientId,
-          client_secret: provider.clientSecret,
-          redirect_uri: params.redirect_uri,
-          code: params.code,
-          grant_type: "authorization_code",
-        }),
-      });
-      return { tokens: await response.json() };
-    },
-  },
+  authorization: "https://www.figma.com/oauth?scope=file_read&response_type=code",
+  token: "https://api.figma.com/v1/oauth/token",
   userinfo: "https://api.figma.com/v1/me",
   clientId: process.env.FIGMA_CLIENT_ID!,
   clientSecret: process.env.FIGMA_CLIENT_SECRET!,
