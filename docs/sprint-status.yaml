@@ -152,56 +152,56 @@ sprints:
     end_date: "2026-03-13"
     capacity_points: 30
     committed_points: 34
-    completed_points: 0
-    status: "not_started"
+    completed_points: 34
+    status: "completed"
     goal: "Dashboard, paiements Stripe, PDF et notifications"
     stories:
       - story_id: "STORY-016"
         title: "Liste des Factures - Dashboard"
         points: 5
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-004"
         priority: "must"
       - story_id: "STORY-017"
         title: "Liste des Factures - Recherche & Filtres"
         points: 3
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-004"
         priority: "must"
       - story_id: "STORY-018"
         title: "Gestion des Statuts de Facture"
         points: 5
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-004"
         priority: "must"
       - story_id: "STORY-022"
         title: "Génération du Lien de Paiement"
         points: 3
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-006"
         priority: "must"
       - story_id: "STORY-023"
         title: "Vue Client - Page Publique"
         points: 5
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-006"
         priority: "must"
       - story_id: "STORY-024"
         title: "Intégration Stripe Checkout"
         points: 5
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-006"
         priority: "must"
       - story_id: "STORY-025"
         title: "Webhook Stripe - Confirmation Paiement"
         points: 5
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-006"
         priority: "must"
       - story_id: "STORY-028"
         title: "Téléchargement PDF"
         points: 3
-        status: "not_started"
+        status: "completed"
         epic: "EPIC-007"
         priority: "must"
 
@@ -243,11 +243,11 @@ backlog:
     epic: "EPIC-008"
 
 velocity:
-  sprint_1: null
-  sprint_2: null
-  sprint_3: null
-  sprint_4: null
-  rolling_average: null
+  sprint_1: 28
+  sprint_2: 29
+  sprint_3: 29
+  sprint_4: 34
+  rolling_average: 30
 
 team:
   size: 1
@@ -260,5 +260,5 @@ metrics:
   total_points: 121
   must_have_stories: 25
   should_have_stories: 7
-  completed_stories: 18
-  completed_points: 86
+  completed_stories: 26
+  completed_points: 120

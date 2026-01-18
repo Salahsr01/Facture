@@ -1,35 +1,131 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { invoices } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { invoices, clients } from "@/lib/db/schema";
+import { eq, desc, and, gte, lte, or, ilike, sql } from "drizzle-orm";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText } from "lucide-react";
-import { formatCurrency, formatDate, getStatusLabel, getStatusColor } from "@/lib/utils";
+import { StatsCards } from "@/components/dashboard/stats-cards";
+import { InvoiceFilters } from "@/components/dashboard/invoice-filters";
+import { InvoicesTable } from "@/components/dashboard/invoices-table";
+import { redirect } from "next/navigation";
 
-async function getInvoices(userId: string) {
-  try {
-    return await db.query.invoices.findMany({
-      where: eq(invoices.userId, userId),
-      with: {
-        client: true,
-      },
-      orderBy: [desc(invoices.createdAt)],
-    });
-  } catch {
-    return [];
-  }
+interface SearchParams {
+  search?: string;
+  status?: string;
+  from?: string;
+  to?: string;
+  page?: string;
 }
 
-export default async function InvoicesPage() {
-  const session = await auth();
-  if (!session?.user?.id) return null;
+async function getInvoicesWithStats(
+  userId: string,
+  searchParams: SearchParams
+) {
+  const page = parseInt(searchParams.page || "1");
+  const pageSize = 20;
+  const offset = (page - 1) * pageSize;
 
-  const userInvoices = await getInvoices(session.user.id);
+  // Build where conditions
+  const conditions = [eq(invoices.userId, userId)];
+
+  if (searchParams.status && searchParams.status !== "all") {
+    conditions.push(eq(invoices.status, searchParams.status as any));
+  }
+
+  if (searchParams.from) {
+    conditions.push(gte(invoices.issueDate, new Date(searchParams.from)));
+  }
+
+  if (searchParams.to) {
+    conditions.push(lte(invoices.issueDate, new Date(searchParams.to)));
+  }
+
+  // Get all invoices for stats (without pagination)
+  const allInvoices = await db.query.invoices.findMany({
+    where: eq(invoices.userId, userId),
+    with: { client: true },
+  });
+
+  // Get filtered invoices with pagination
+  let filteredInvoices = await db.query.invoices.findMany({
+    where: and(...conditions),
+    with: { client: true },
+    orderBy: [desc(invoices.createdAt)],
+    limit: pageSize,
+    offset,
+  });
+
+  // Apply search filter (client-side for simplicity)
+  if (searchParams.search) {
+    const searchLower = searchParams.search.toLowerCase();
+    filteredInvoices = filteredInvoices.filter(
+      (inv) =>
+        inv.number.toLowerCase().includes(searchLower) ||
+        inv.client?.companyName.toLowerCase().includes(searchLower)
+    );
+  }
+
+  // Get total count for filtered results
+  const totalFiltered = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(invoices)
+    .where(and(...conditions));
+
+  const totalCount = Number(totalFiltered[0]?.count || 0);
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  // Calculate stats
+  const stats = {
+    totalInvoices: allInvoices.length,
+    totalAmount: allInvoices.reduce(
+      (sum, inv) => sum + parseFloat(inv.total),
+      0
+    ),
+    paidAmount: allInvoices
+      .filter((inv) => inv.status === "paid")
+      .reduce((sum, inv) => sum + parseFloat(inv.total), 0),
+    pendingAmount: allInvoices
+      .filter((inv) => inv.status === "sent" || inv.status === "draft")
+      .reduce((sum, inv) => sum + parseFloat(inv.total), 0),
+    overdueAmount: allInvoices
+      .filter((inv) => inv.status === "overdue")
+      .reduce((sum, inv) => sum + parseFloat(inv.total), 0),
+    overdueCount: allInvoices.filter((inv) => inv.status === "overdue").length,
+    paidCount: allInvoices.filter((inv) => inv.status === "paid").length,
+    pendingCount: allInvoices.filter(
+      (inv) => inv.status === "sent" || inv.status === "draft"
+    ).length,
+    clientsCount: new Set(allInvoices.map((inv) => inv.clientId)).size,
+  };
+
+  return {
+    invoices: filteredInvoices,
+    stats,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalCount,
+    },
+  };
+}
+
+export default async function InvoicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const params = await searchParams;
+  const { invoices: userInvoices, stats, pagination } = await getInvoicesWithStats(
+    session.user.id,
+    params
+  );
 
   return (
     <div className="space-y-6">
@@ -49,8 +145,19 @@ export default async function InvoicesPage() {
         </Button>
       </div>
 
+      {/* Stats */}
+      <StatsCards stats={stats} />
+
+      {/* Filters */}
+      <InvoiceFilters
+        initialSearch={params.search}
+        initialStatus={params.status}
+        initialDateFrom={params.from}
+        initialDateTo={params.to}
+      />
+
       {/* Invoices List */}
-      {userInvoices.length === 0 ? (
+      {stats.totalInvoices === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <FileText className="h-12 w-12 text-muted-foreground/50" />
@@ -68,77 +175,33 @@ export default async function InvoicesPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="rounded-lg border">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    N°
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Client
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Échéance
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Montant
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Statut
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {userInvoices.map((invoice) => {
-                  const statusColor = getStatusColor(invoice.status);
-                  return (
-                    <tr
-                      key={invoice.id}
-                      className="border-b hover:bg-muted/50 transition-colors"
-                    >
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {invoice.number}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {invoice.client?.companyName || "—"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {formatDate(invoice.issueDate)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {formatDate(invoice.dueDate)}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {formatCurrency(invoice.total)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusColor.bg} ${statusColor.text}`}
-                        >
-                          {getStatusLabel(invoice.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <Button asChild variant="ghost" size="sm">
-                          <Link href={`/invoices/${invoice.id}`}>Voir</Link>
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <InvoicesTableWrapper
+          invoices={userInvoices}
+          pagination={pagination}
+          searchParams={params}
+        />
       )}
     </div>
+  );
+}
+
+// Client component wrapper for pagination
+function InvoicesTableWrapper({
+  invoices,
+  pagination,
+  searchParams,
+}: {
+  invoices: any[];
+  pagination: { currentPage: number; totalPages: number; totalCount: number };
+  searchParams: SearchParams;
+}) {
+  return (
+    <InvoicesTable
+      invoices={invoices}
+      currentPage={pagination.currentPage}
+      totalPages={pagination.totalPages}
+      totalCount={pagination.totalCount}
+      onPageChange={() => {}}
+    />
   );
 }
