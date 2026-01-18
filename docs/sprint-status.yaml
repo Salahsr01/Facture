@@ -1,0 +1,264 @@
+# BMAD Method - Sprint Status
+# Project: FigmaInvoice
+# Generated: 2026-01-18
+
+version: "6.0.0"
+project_name: "FigmaInvoice"
+project_level: 2
+current_sprint: 4
+sprint_plan_path: "docs/sprint-plan-figmainvoice-2026-01-18.md"
+
+sprints:
+  - sprint_number: 1
+    start_date: "2026-01-20"
+    end_date: "2026-01-31"
+    capacity_points: 30
+    committed_points: 28
+    completed_points: 28
+    status: "completed"
+    goal: "Établir les fondations - Auth, Profil, Import Figma de base"
+    stories:
+      - story_id: "STORY-000"
+        title: "Setup Projet Next.js 16"
+        points: 5
+        status: "completed"
+        epic: "Infrastructure"
+        priority: "must"
+      - story_id: "STORY-001"
+        title: "OAuth Figma - Configuration"
+        points: 5
+        status: "completed"
+        epic: "EPIC-001"
+        priority: "must"
+      - story_id: "STORY-002"
+        title: "OAuth Figma - Gestion de Session"
+        points: 3
+        status: "completed"
+        epic: "EPIC-001"
+        priority: "must"
+      - story_id: "STORY-003"
+        title: "Profil - Informations de Base"
+        points: 5
+        status: "completed"
+        epic: "EPIC-001"
+        priority: "must"
+      - story_id: "STORY-004"
+        title: "Profil - Infos Légales & Bancaires"
+        points: 5
+        status: "completed"
+        epic: "EPIC-001"
+        priority: "must"
+      - story_id: "STORY-005"
+        title: "Import Figma - Saisie URL"
+        points: 3
+        status: "completed"
+        epic: "EPIC-002"
+        priority: "must"
+      - story_id: "STORY-032"
+        title: "Sécurité & Conformité RGPD"
+        points: 2
+        status: "completed"
+        epic: "NFRs"
+        priority: "must"
+
+  - sprint_number: 2
+    start_date: "2026-02-03"
+    end_date: "2026-02-14"
+    capacity_points: 30
+    committed_points: 29
+    completed_points: 29
+    status: "completed"
+    goal: "Compléter l'import Figma et l'éditeur de base"
+    stories:
+      - story_id: "STORY-006"
+        title: "Import Figma - Appel API"
+        points: 5
+        status: "completed"
+        epic: "EPIC-002"
+        priority: "must"
+      - story_id: "STORY-007"
+        title: "Parsing Design - Extraction Structure"
+        points: 8
+        status: "completed"
+        epic: "EPIC-002"
+        priority: "must"
+      - story_id: "STORY-008"
+        title: "Parsing Design - Rendu Preview"
+        points: 8
+        status: "completed"
+        epic: "EPIC-002"
+        priority: "must"
+      - story_id: "STORY-009"
+        title: "Éditeur - Canvas Interactif"
+        points: 5
+        status: "completed"
+        epic: "EPIC-003"
+        priority: "must"
+      - story_id: "STORY-012"
+        title: "Éditeur - Sauvegarde Template"
+        points: 3
+        status: "completed"
+        epic: "EPIC-003"
+        priority: "must"
+
+  - sprint_number: 3
+    start_date: "2026-02-17"
+    end_date: "2026-02-28"
+    capacity_points: 30
+    committed_points: 29
+    completed_points: 29
+    status: "completed"
+    goal: "Éditeur avancé, création de factures et gestion clients"
+    stories:
+      - story_id: "STORY-010"
+        title: "Éditeur - Mapping des Variables"
+        points: 8
+        status: "completed"
+        epic: "EPIC-003"
+        priority: "must"
+      - story_id: "STORY-013"
+        title: "Création de Facture - Formulaire"
+        points: 5
+        status: "completed"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-014"
+        title: "Création de Facture - Lignes de Services"
+        points: 5
+        status: "completed"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-015"
+        title: "Création de Facture - Calculs Totaux"
+        points: 3
+        status: "completed"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-020"
+        title: "Clients - CRUD Complet"
+        points: 5
+        status: "completed"
+        epic: "EPIC-005"
+        priority: "must"
+      - story_id: "STORY-021"
+        title: "Clients - Vue Détail avec Historique"
+        points: 3
+        status: "completed"
+        epic: "EPIC-005"
+        priority: "must"
+
+  - sprint_number: 4
+    start_date: "2026-03-02"
+    end_date: "2026-03-13"
+    capacity_points: 30
+    committed_points: 34
+    completed_points: 0
+    status: "not_started"
+    goal: "Dashboard, paiements Stripe, PDF et notifications"
+    stories:
+      - story_id: "STORY-016"
+        title: "Liste des Factures - Dashboard"
+        points: 5
+        status: "not_started"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-017"
+        title: "Liste des Factures - Recherche & Filtres"
+        points: 3
+        status: "not_started"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-018"
+        title: "Gestion des Statuts de Facture"
+        points: 5
+        status: "not_started"
+        epic: "EPIC-004"
+        priority: "must"
+      - story_id: "STORY-022"
+        title: "Génération du Lien de Paiement"
+        points: 3
+        status: "not_started"
+        epic: "EPIC-006"
+        priority: "must"
+      - story_id: "STORY-023"
+        title: "Vue Client - Page Publique"
+        points: 5
+        status: "not_started"
+        epic: "EPIC-006"
+        priority: "must"
+      - story_id: "STORY-024"
+        title: "Intégration Stripe Checkout"
+        points: 5
+        status: "not_started"
+        epic: "EPIC-006"
+        priority: "must"
+      - story_id: "STORY-025"
+        title: "Webhook Stripe - Confirmation Paiement"
+        points: 5
+        status: "not_started"
+        epic: "EPIC-006"
+        priority: "must"
+      - story_id: "STORY-028"
+        title: "Téléchargement PDF"
+        points: 3
+        status: "not_started"
+        epic: "EPIC-007"
+        priority: "must"
+
+backlog:
+  - story_id: "STORY-011"
+    title: "Éditeur - Modification des Styles"
+    points: 5
+    priority: "should"
+    epic: "EPIC-003"
+  - story_id: "STORY-019"
+    title: "Duplication de Facture"
+    points: 2
+    priority: "should"
+    epic: "EPIC-004"
+  - story_id: "STORY-026"
+    title: "Paiement Partiel (Acompte)"
+    points: 5
+    priority: "should"
+    epic: "EPIC-006"
+  - story_id: "STORY-027"
+    title: "Génération PDF Serveur"
+    points: 8
+    priority: "must"
+    epic: "EPIC-007"
+  - story_id: "STORY-029"
+    title: "Envoi de Facture par Email"
+    points: 5
+    priority: "must"
+    epic: "EPIC-008"
+  - story_id: "STORY-030"
+    title: "Templates Email (React Email)"
+    points: 5
+    priority: "must"
+    epic: "EPIC-008"
+  - story_id: "STORY-031"
+    title: "Notifications Automatiques"
+    points: 5
+    priority: "should"
+    epic: "EPIC-008"
+
+velocity:
+  sprint_1: null
+  sprint_2: null
+  sprint_3: null
+  sprint_4: null
+  rolling_average: null
+
+team:
+  size: 1
+  sprint_length_weeks: 2
+  capacity_per_sprint: 30
+  experience_level: "senior"
+
+metrics:
+  total_stories: 32
+  total_points: 121
+  must_have_stories: 25
+  should_have_stories: 7
+  completed_stories: 18
+  completed_points: 86
