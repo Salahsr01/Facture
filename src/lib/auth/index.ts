@@ -11,9 +11,8 @@ const FigmaProvider = {
   authorization: {
     url: "https://www.figma.com/oauth",
     params: {
-      scope: "files:read",
+      scope: "file_read",
       response_type: "code",
-      state: crypto.randomUUID(),
     },
   },
   token: {
